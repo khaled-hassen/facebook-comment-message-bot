@@ -72,23 +72,23 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore")
 
     try:
-        file = open("credentials.txt", "r")
-        creds = file.read().split(":")
-        email = creds[0]
-        password = creds[1]
-        file.close()
-
         cli = setup_cli()
         args = cli.parse_args()
-
-        bot = Fb.FacebookBot()
-        is_logged_in = bot.login(email, password)
-        if not is_logged_in:
-            raise Exception
 
         if len(sys.argv) < 2:
             cli.print_help()
         else:
+            file = open("credentials.txt", "r")
+            creds = file.read().split(":")
+            email = creds[0]
+            password = creds[1]
+            file.close()
+
+            bot = Fb.FacebookBot()
+            is_logged_in = bot.login(email, password)
+            if not is_logged_in:
+                raise Exception
+
             command = sys.argv[1]
             times = 1 if args.repeat is None else args.repeat
             for _ in range(times):
@@ -97,6 +97,6 @@ if __name__ == "__main__":
                 if command == "comment":
                     comment(bot, url=args.url, text=args.text)
 
-        bot.logout()
+            bot.logout()
     except FileNotFoundError:
         print("credentials.txt not found")
