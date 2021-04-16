@@ -82,7 +82,7 @@ if __name__ == "__main__":
         args = cli.parse_args()
 
         bot = Fb.FacebookBot()
-        is_logged_in = bot.login("55612056", "thanos")
+        is_logged_in = bot.login(email, password)
         if not is_logged_in:
             raise Exception
 
