@@ -68,28 +68,35 @@ def comment(bot: FacebookBot, url: str, text: str):
     print("\tComment is posted successfully")
 
 
-#
-# bot.logout()
-# exit(0)
-
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
 
-    cli = setup_cli()
-    args = cli.parse_args()
+    try:
+        file = open("credentials.txt", "r")
+        creds = file.read().split(":")
+        email = creds[0]
+        password = creds[1]
+        file.close()
 
-    bot = Fb.FacebookBot()
-    bot.login("55612056", "thanos")
+        cli = setup_cli()
+        args = cli.parse_args()
 
-    if len(sys.argv) < 2:
-        cli.print_help()
-    else:
-        command = sys.argv[1]
-        times = 1 if args.repeat is None else args.repeat
-        for _ in range(times):
-            if command == "message":
-                message(bot, url=args.url, text=args.text)
-            if command == "comment":
-                comment(bot, url=args.url, text=args.text)
+        bot = Fb.FacebookBot()
+        is_logged_in = bot.login("55612056", "thanos")
+        if not is_logged_in:
+            raise Exception
 
-    bot.logout()
+        if len(sys.argv) < 2:
+            cli.print_help()
+        else:
+            command = sys.argv[1]
+            times = 1 if args.repeat is None else args.repeat
+            for _ in range(times):
+                if command == "message":
+                    message(bot, url=args.url, text=args.text)
+                if command == "comment":
+                    comment(bot, url=args.url, text=args.text)
+
+        bot.logout()
+    except FileNotFoundError:
+        print("credentials.txt not found")
